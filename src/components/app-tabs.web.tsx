@@ -15,6 +15,8 @@ import { ThemedView } from './themed-view';
 
 import { Colors, MaxContentWidth, Spacing } from '@/constants/theme';
 
+type TabIconName = 'house.fill' | 'calendar' | 'cross.case.fill' | 'person.fill';
+
 export default function AppTabs() {
   return (
     <Tabs>
@@ -22,10 +24,16 @@ export default function AppTabs() {
       <TabList asChild>
         <CustomTabList>
           <TabTrigger name="home" href="/" asChild>
-            <TabButton>Home</TabButton>
+            <TabButton icon="house.fill">Home</TabButton>
           </TabTrigger>
-          <TabTrigger name="explore" href="/explore" asChild>
-            <TabButton>Explore</TabButton>
+          <TabTrigger name="bookings" href="/bookings" asChild>
+            <TabButton icon="calendar">Bookings</TabButton>
+          </TabTrigger>
+          <TabTrigger name="prescriptions" href="/prescriptions" asChild>
+            <TabButton icon="cross.case.fill">Prescriptions</TabButton>
+          </TabTrigger>
+          <TabTrigger name="profile" href="/profile" asChild>
+            <TabButton icon="person.fill">Profile</TabButton>
           </TabTrigger>
         </CustomTabList>
       </TabList>
@@ -33,12 +41,13 @@ export default function AppTabs() {
   );
 }
 
-export function TabButton({ children, isFocused, ...props }: TabTriggerSlotProps) {
+export function TabButton({ children, isFocused, icon, ...props }: TabTriggerSlotProps & { icon: TabIconName }) {
   return (
     <Pressable {...props} style={({ pressed }) => pressed && styles.pressed}>
       <ThemedView
         type={isFocused ? 'backgroundSelected' : 'backgroundElement'}
         style={styles.tabButtonView}>
+        <SymbolView name={{ ios: icon }} size={16} />
         <ThemedText type="small" themeColor={isFocused ? 'text' : 'textSecondary'}>
           {children}
         </ThemedText>
@@ -54,8 +63,8 @@ export function CustomTabList(props: TabListProps) {
   return (
     <View {...props} style={styles.tabListContainer}>
       <ThemedView type="backgroundElement" style={styles.innerContainer}>
-        <ThemedText type="smallBold" style={styles.brandText}>
-          Expo Starter
+          <ThemedText type="smallBold" style={styles.brandText}>
+          Tapza Care
         </ThemedText>
 
         {props.children}
