@@ -1,62 +1,141 @@
-# Welcome to your Expo app 👋
+# Tapza Care
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Tapza Care is a React Native healthcare app built for the Tapza Care assignment. It uses TypeScript, Expo, config-driven UI, appointment booking, prescriptions and reminders, resilience controls, accessibility support, and responsive themed layouts.
 
-## Get started
+## Tech Stack
 
-1. Install dependencies
+- React Native 0.86.3
+- Expo SDK 57
+- React 19
+- TypeScript
+- Expo Router
+- Redux Toolkit
+- AsyncStorage
+- React Native Reanimated and Gesture Handler
+- Mock API layer
 
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Getting Started
 
 ```bash
-npm run reset-project
+npm install
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Press `a` in the Expo terminal to open the Android app.
 
-### Other setup steps
+Validate TypeScript with:
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+```bash
+npx tsc --noEmit
+```
 
-## Learn more
+## Key Features
 
-To learn more about developing your project with Expo, look at the following resources:
+- Config-driven Home screen
+- Normal and Festival configurations
+- Runtime configuration switching without changing source code
+- Safe handling of unknown section types
+- Hero banner, category chips, quick actions, services, doctors, and offers
+- Doctor appointment booking
+- Date and gesture-driven slot selection
+- Optimistic booking with 409 conflict handling
+- Persistent booking history
+- Prescriptions and medicine schedules
+- Morning, afternoon, and night dose tracking
+- Persistent dose status
+- Loading, empty, error, and retry states
+- Cached last-known-good Home configuration
+- Slow and failed network simulation
+- Accessibility support
+- Responsive layouts
+- Light, Festival, and Dark themes
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Architecture
 
-## Test Tools
+- Expo Router provides file-based navigation and booking/prescription routes.
+- Redux Toolkit manages Home, booking, and prescription state.
+- Features are organized by domain under `src/features`.
+- The mock API service layer simulates configuration, doctor, slot, booking, and prescription requests.
+- AsyncStorage persists booking history, dose status, cached Home configuration, and reviewer test settings.
+- Home configuration is validated before rendering and uses a section registry for extensible section types.
 
-The submitted APK includes the resilience testing controls. Open the **Profile** tab and scroll to **Test Tools**.
+## Mock API / Test Tools
 
-Use the panel to switch between Normal, Slow, and Failed network modes; return empty doctor, slot, or prescription responses; simulate a booking 409 conflict; or reset every setting with **Reset all**. Settings are stored locally in the app and remain selected after an app restart, so reviewers can configure a failure scenario before reopening Home, Booking, or Prescriptions.
+The submitted APK intentionally includes Test Tools so reviewers can test resilience without modifying source code.
 
-## Join the community
+Access them at:
 
-Join our community of developers creating universal apps.
+**Profile → Test Tools**
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Available controls:
+
+- Normal network
+- Slow network
+- Failed network
+- Empty doctors
+- Empty slots
+- Empty prescriptions
+- Booking 409 conflict
+- Reset all
+
+Test Tool settings persist across app restarts. **Reset all** returns every setting to its normal state.
+
+## Resilience Scenarios
+
+- Failed Home configuration uses the cached configuration when available.
+- Slow requests display loading and skeleton states.
+- Failed requests provide retry actions.
+- Empty responses display usable empty states.
+- Booking conflicts do not show false success.
+- Users can retry failed requests or choose another slot after a conflict.
+
+## Accessibility
+
+- Interactive controls use approximately 44pt or larger touch targets.
+- Buttons, selectable controls, and important content expose accessibility labels, roles, and states.
+- Text supports system font scaling.
+- Contrast is maintained across Light, Festival, and Dark themes.
+- Error, empty, selected, taken, and offline states are not communicated by color alone.
+
+## Project Structure
+
+```text
+src/
+   app/
+      (tabs)/
+      booking/
+      prescriptions/
+   features/
+      home/
+      booking/
+      prescriptions/
+      development/
+   state/
+   services/
+      mock/
+   components/
+   theme/
+   types/
+```
+
+## Validation
+
+```bash
+npx tsc --noEmit
+```
+
+Automated Jest or unit tests were not added.
+
+## Submission Notes
+
+- APK: `TODO`
+- Demo video: `TODO`
+- Screenshots: `TODO`
+
+## Notes
+
+This project uses a mock backend; no external backend is required.
+
+The app is designed so reviewers can demonstrate failure and recovery scenarios directly from the submitted APK.
+
+Detailed AI usage and prompts are documented separately in `AI_LOG.md`.
