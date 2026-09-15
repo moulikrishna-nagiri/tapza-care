@@ -19,6 +19,7 @@ import { DateSelector } from "@/features/booking/components/DateSelector";
 import { SlotBottomSheet } from "@/features/booking/components/SlotBottomSheet";
 import { useAppDispatch, useAppSelector } from "@/hooks/app-hooks";
 import { theme } from "@/theme/theme";
+import { useAppTheme } from "@/theme/app-theme";
 import type { Slot } from "@/types/booking";
 
 function toDateKey(date: Date) {
@@ -41,6 +42,7 @@ export default function DoctorBookingScreen() {
   const { doctorId } = useLocalSearchParams<{ doctorId: string }>();
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const { theme: appTheme } = useAppTheme();
   const dates = useMemo(upcomingDates, []);
   const [sheetVisible, setSheetVisible] = useState(false);
   const {
@@ -71,7 +73,7 @@ export default function DoctorBookingScreen() {
 
   if (bookingStatus === "confirmed" && booking)
     return (
-      <SafeAreaView style={styles.safe}>
+      <SafeAreaView style={[styles.safe, { backgroundColor: appTheme.colors.background }] }>
         <BookingSuccess
           booking={booking}
           onBookings={() => router.replace("/bookings")}
@@ -81,7 +83,7 @@ export default function DoctorBookingScreen() {
     );
   if (!doctor && loadingDoctors)
     return (
-      <SafeAreaView style={styles.safe}>
+      <SafeAreaView style={[styles.safe, { backgroundColor: appTheme.colors.background }] }>
         <View style={styles.loading}>
           <Skeleton width="70%" height={30} />
           <Skeleton width="45%" height={20} />
@@ -112,7 +114,7 @@ export default function DoctorBookingScreen() {
     if (selectedSlot) dispatch(submitBooking({ doctor, slot: selectedSlot }));
   };
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: appTheme.colors.background }] }>
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>{doctor.name}</Text>
         <Text style={styles.subtitle}>

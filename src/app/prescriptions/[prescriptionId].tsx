@@ -14,6 +14,7 @@ import {
 } from "@/features/prescriptions/prescriptionsSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/app-hooks";
 import { theme } from "@/theme/theme";
+import { useAppTheme } from "@/theme/app-theme";
 import type { DosePeriod } from "@/types/prescription";
 
 function todayKey() {
@@ -29,6 +30,7 @@ export default function PrescriptionDetailScreen() {
   const { prescriptionId } = useLocalSearchParams<{ prescriptionId: string }>();
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const { theme: appTheme } = useAppTheme();
   const { prescriptions, loading, doseStatuses, doseLoading } = useAppSelector(
     (state) => state.prescriptions,
   );
@@ -43,7 +45,7 @@ export default function PrescriptionDetailScreen() {
 
   if (loading && !prescription)
     return (
-      <SafeAreaView style={styles.safe}>
+      <SafeAreaView style={[styles.safe, { backgroundColor: appTheme.colors.background }] }>
         <View style={styles.loading}>
           <Skeleton width="65%" height={30} />
           <Skeleton width="45%" height={18} />
@@ -54,7 +56,7 @@ export default function PrescriptionDetailScreen() {
     );
   if (!prescription)
     return (
-      <SafeAreaView style={styles.safe}>
+      <SafeAreaView style={[styles.safe, { backgroundColor: appTheme.colors.background }] }>
         <View style={styles.center}>
           <Text style={styles.errorTitle}>Prescription not found</Text>
           <Text style={styles.errorText}>
@@ -87,7 +89,7 @@ export default function PrescriptionDetailScreen() {
     ? prescription.medicines
     : [];
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: appTheme.colors.background }] }>
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>Prescription details</Text>
         <View style={styles.summary}>

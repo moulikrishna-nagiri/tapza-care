@@ -11,10 +11,13 @@ import {
     type MockNetworkMode,
 } from "@/services/mock/mockApi";
 import { theme } from "@/theme/theme";
+import { useAppTheme, type AppThemeMode } from "@/theme/app-theme";
 
 type EmptySetting = "emptyDoctors" | "emptySlots" | "emptyPrescriptions";
 
 export function MockApiTestingPanel() {
+  const { theme: appTheme, setMode } = useAppTheme();
+  const styles = createStyles(appTheme.colors);
   const [settings, setSettings] = useState(() => ({ ...mockSettings }));
   useEffect(() => {
     void loadMockSettings().then(() => setSettings({ ...mockSettings }));
@@ -38,7 +41,7 @@ export function MockApiTestingPanel() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: appTheme.colors.surface, borderColor: appTheme.colors.border }]}>
       <Text style={styles.title}>Test Tools</Text>
       <Text style={styles.subtitle}>
         Use these controls to simulate API/network conditions.
@@ -84,6 +87,8 @@ export function MockApiTestingPanel() {
       >
         <Text style={styles.resetText}>Reset all</Text>
       </Pressable>
+      <Text style={[styles.label, { color: appTheme.colors.text }]}>App appearance</Text>
+      <View style={styles.row}>{(['normal', 'festival', 'dark'] as AppThemeMode[]).map((mode) => <Pressable key={mode} accessibilityRole="radio" accessibilityState={{ selected: appTheme.mode === mode }} accessibilityLabel={`Use ${mode} appearance`} onPress={() => setMode(mode)} style={[styles.toggle, appTheme.mode === mode && { backgroundColor: appTheme.colors.primary, borderColor: appTheme.colors.primary }]}><Text style={[styles.toggleText, appTheme.mode === mode && styles.activeText]}>{mode}</Text></Pressable>)}</View>
     </View>
   );
 }
@@ -97,6 +102,8 @@ function ToggleButton({
   active: boolean;
   onPress: () => void;
 }) {
+  const { theme: appTheme } = useAppTheme();
+  const styles = createStyles(appTheme.colors);
   return (
     <Pressable
       accessibilityRole="radio"
@@ -121,11 +128,13 @@ function SettingRow({
   active: boolean;
   onPress: () => void;
 }) {
+  const { theme: appTheme } = useAppTheme();
+  const styles = createStyles(appTheme.colors);
   return (
     <Pressable
       accessibilityRole="switch"
       accessibilityState={{ checked: active }}
-      accessibilityLabel={`${label} empty response ${active ? "on" : "off"}`}
+      accessibilityLabel={`${label} ${active ? "on" : "off"}`}
       onPress={onPress}
       style={styles.settingRow}
     >
@@ -139,19 +148,19 @@ function SettingRow({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: typeof theme.colors) => StyleSheet.create({
   container: {
     marginTop: 28,
     padding: theme.spacing.md,
     borderRadius: theme.radii.lg,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: colors.border,
   },
-  title: { color: theme.colors.text, fontSize: 19, fontWeight: "800" },
-  subtitle: { color: theme.colors.mutedText, fontSize: 13, marginTop: 4 },
+  title: { color: colors.text, fontSize: 19, fontWeight: "800" },
+  subtitle: { color: colors.mutedText, fontSize: 13, lineHeight: 19, marginTop: 4 },
   label: {
-    color: theme.colors.text,
+    color: colors.text,
     fontSize: 14,
     fontWeight: "800",
     marginTop: 22,
@@ -163,7 +172,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: colors.border,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -172,7 +181,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.primary,
   },
   toggleText: {
-    color: theme.colors.mutedText,
+    color: colors.mutedText,
     fontSize: 13,
     fontWeight: "700",
     textTransform: "capitalize",
@@ -184,16 +193,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
-  settingLabel: { color: theme.colors.text, fontSize: 15 },
+  settingLabel: { color: colors.text, fontSize: 15 },
   switch: {
     minWidth: 58,
     minHeight: 32,
     paddingHorizontal: 10,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: colors.border,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -202,17 +211,17 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.primary,
   },
   switchText: {
-    color: theme.colors.mutedText,
+    color: colors.mutedText,
     fontSize: 11,
     fontWeight: "800",
   },
   reset: {
     minHeight: 48,
     borderRadius: 24,
-    backgroundColor: theme.colors.secondary,
+    backgroundColor: colors.secondary,
     justifyContent: "center",
     alignItems: "center",
     marginTop: 24,
   },
-  resetText: { color: theme.colors.text, fontSize: 14, fontWeight: "800" },
+  resetText: { color: colors.text, fontSize: 14, fontWeight: "800" },
 });

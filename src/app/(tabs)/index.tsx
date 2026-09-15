@@ -69,7 +69,7 @@ export default function HomeScreen() {
         <View style={styles.modeRow}>
           <Text style={[styles.modeLabel, { color: data.theme.textSecondary }]}>
             {isStale
-              ? "Offline mode"
+              ? "Offline: showing saved content"
               : data.theme.festival.name || "Personal care"}
           </Text>
           <Pressable
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
   },
   modeLabel: { fontSize: 13, fontWeight: "600" },
   modeButton: {
-    minHeight: 40,
+  minHeight: 44,
     borderWidth: 1,
     borderRadius: 20,
     paddingHorizontal: 14,

@@ -8,6 +8,7 @@ import Animated, {
 
 import { theme } from "@/theme/theme";
 import type { HeroItem, SectionConfig } from "@/types/config";
+import { useAppTheme } from '@/theme/app-theme';
 
 type HeroBannerProps = {
   section: SectionConfig;
@@ -16,6 +17,8 @@ type HeroBannerProps = {
 };
 
 export function HeroBanner({ section, scrollY, onAction }: HeroBannerProps) {
+  const { theme: appTheme } = useAppTheme();
+  const styles = createStyles(appTheme.colors);
   const item = section.items[0] as HeroItem | undefined;
   if (!item) return null;
   const imageStyle = useAnimatedStyle(() => ({
@@ -52,7 +55,7 @@ export function HeroBanner({ section, scrollY, onAction }: HeroBannerProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: typeof theme.colors) => StyleSheet.create({
   container: {
     minHeight: 270,
     borderRadius: 24,
@@ -62,31 +65,31 @@ const styles = StyleSheet.create({
   image: { ...StyleSheet.absoluteFill },
   overlay: {
     ...StyleSheet.absoluteFill,
-    backgroundColor: "rgba(10, 42, 48, 0.56)",
+    backgroundColor: colors.overlay,
   },
   content: { padding: 24, maxWidth: 360 },
   eyebrow: {
-    color: "#A8E7DE",
+    color: colors.secondary,
     fontSize: 12,
     fontWeight: "700",
     letterSpacing: 1,
   },
   title: {
-    color: "#FFFFFF",
+    color: colors.onPrimary,
     fontSize: 30,
     lineHeight: 35,
     fontWeight: "800",
     marginTop: 8,
   },
-  subtitle: { color: "#E8F5F3", fontSize: 15, lineHeight: 22, marginTop: 8 },
+  subtitle: { color: colors.onPrimary, fontSize: 15, lineHeight: 22, marginTop: 8 },
   cta: {
     minHeight: 46,
     alignSelf: "flex-start",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderRadius: 23,
     paddingHorizontal: 19,
     justifyContent: "center",
     marginTop: 18,
   },
-  ctaText: { color: theme.colors.primary, fontSize: 15, fontWeight: "700" },
+  ctaText: { color: colors.primary, fontSize: 15, fontWeight: "700" },
 });

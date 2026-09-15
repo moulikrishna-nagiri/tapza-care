@@ -15,10 +15,12 @@ import { loadDoctors, resetBookingFlow } from "@/features/booking/bookingSlice";
 import { DoctorCard } from "@/features/booking/components/DoctorCard";
 import { useAppDispatch, useAppSelector } from "@/hooks/app-hooks";
 import { theme } from "@/theme/theme";
+import { useAppTheme } from "@/theme/app-theme";
 
 export default function DoctorSelectionScreen() {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const { theme: appTheme } = useAppTheme();
   const { doctors, loadingDoctors, error } = useAppSelector(
     (state) => state.booking,
   );
@@ -32,7 +34,7 @@ export default function DoctorSelectionScreen() {
   }, [dispatch, doctors.length]);
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: appTheme.colors.background }] }>
       <FlatList
         data={doctors}
         keyExtractor={(doctor) => doctor.id}

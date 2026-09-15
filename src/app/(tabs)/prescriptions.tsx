@@ -18,10 +18,12 @@ import {
 } from "@/features/prescriptions/prescriptionsSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/app-hooks";
 import { theme } from "@/theme/theme";
+import { useAppTheme } from "@/theme/app-theme";
 
 export default function PrescriptionsScreen() {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const { theme: appTheme } = useAppTheme();
   const { prescriptions, loading, error } = useAppSelector(
     (state) => state.prescriptions,
   );
@@ -34,7 +36,7 @@ export default function PrescriptionsScreen() {
   }, [reload]);
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: appTheme.colors.background }] }>
       <FlatList
         data={prescriptions}
         keyExtractor={(item) => item.id}

@@ -8,10 +8,10 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
 
-import { AnimatedSplashOverlay } from "@/components/animated-icon";
 import { useAppSelector } from "@/hooks/app-hooks";
 import { loadMockSettings } from "@/services/mock/mockApi";
 import { store } from "@/state/store";
+import { AppThemeProvider, useAppTheme } from "@/theme/app-theme";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -20,7 +20,15 @@ export default function TabLayout() {
   const [mockSettingsLoaded, setMockSettingsLoaded] = useState(false);
 
   useEffect(() => {
-    void loadMockSettings().then(() => setMockSettingsLoaded(true));
+    const initializationTimeout = new Promise<void>((resolve) => {
+      setTimeout(resolve, 1500);
+    });
+    void Promise.race([loadMockSettings(), initializationTimeout])
+      .catch(() => undefined)
+      .finally(() => {
+        setMockSettingsLoaded(true);
+        void SplashScreen.hideAsync();
+      });
   }, []);
 
   if (!mockSettingsLoaded) return null;
@@ -29,13 +37,12 @@ export default function TabLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <Provider store={store}>
-          <ThemeProvider
-            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-          >
-            <RootStatusBar />
-            <AnimatedSplashOverlay />
-            <Stack screenOptions={{ headerShown: false }} />
-          </ThemeProvider>
+          <AppThemeProvider>
+            <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+              <RootStatusBar />
+              <Stack screenOptions={{ headerShown: false }} />
+            </ThemeProvider>
+          </AppThemeProvider>
         </Provider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
@@ -44,11 +51,12 @@ export default function TabLayout() {
 
 function RootStatusBar() {
   const { data, isFestival } = useAppSelector((state) => state.config);
-  const backgroundColor = data?.theme.background ?? "#F5FBFA";
+  const { theme } = useAppTheme();
+  const backgroundColor = theme.colors.background;
 
   useEffect(() => {
     SystemUI.setBackgroundColorAsync(backgroundColor);
   }, [backgroundColor]);
 
-  return <StatusBar style={isFestival ? "light" : "dark"} />;
+  return <StatusBar style={theme.mode === 'dark' || isFestival ? "light" : "dark"} />;
 }

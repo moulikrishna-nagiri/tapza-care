@@ -1,6 +1,7 @@
 import { Pressable, ScrollView, StyleSheet, Text } from 'react-native';
 
 import { theme } from '@/theme/theme';
+import { useAppTheme } from '@/theme/app-theme';
 
 type DateSelectorProps = { dates: string[]; selectedDate: string; onSelect: (date: string) => void };
 
@@ -10,7 +11,9 @@ function formatDate(date: string) {
 }
 
 export function DateSelector({ dates, selectedDate, onSelect }: DateSelectorProps) {
-  return <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.content}>{dates.map((date, index) => { const formatted = formatDate(date); const selected = date === selectedDate; return <Pressable key={date} accessibilityRole="button" accessibilityLabel={`Select appointment date ${date}`} accessibilityState={{ selected }} onPress={() => onSelect(date)} style={[styles.date, selected && styles.selected]}><Text style={[styles.weekday, selected && styles.selectedText]}>{index === 0 ? 'Today' : formatted.weekday}</Text><Text style={[styles.day, selected && styles.selectedText]}>{formatted.day}</Text><Text style={[styles.month, selected && styles.selectedText]}>{formatted.month}</Text></Pressable>; })}</ScrollView>;
+  const { theme: appTheme } = useAppTheme();
+  const styles = createStyles(appTheme.colors);
+  return <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.content}>{dates.map((date, index) => { const formatted = formatDate(date); const selected = date === selectedDate; return <Pressable key={date} accessibilityRole="button" accessibilityLabel={`${selected ? 'Selected' : 'Select'} appointment date ${date}`} accessibilityState={{ selected }} onPress={() => onSelect(date)} style={[styles.date, selected && styles.selected]}><Text style={[styles.weekday, selected && styles.selectedText]}>{index === 0 ? 'Today' : formatted.weekday}</Text><Text style={[styles.day, selected && styles.selectedText]}>{formatted.day}</Text><Text style={[styles.month, selected && styles.selectedText]}>{formatted.month}</Text></Pressable>; })}</ScrollView>;
 }
 
-const styles = StyleSheet.create({ content: { gap: 10, paddingVertical: 4 }, date: { width: 76, minHeight: 88, borderRadius: theme.radii.md, borderWidth: 1, borderColor: theme.colors.border, backgroundColor: theme.colors.surface, justifyContent: 'center', alignItems: 'center' }, selected: { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary }, weekday: { color: theme.colors.mutedText, fontSize: 12, fontWeight: '700' }, day: { color: theme.colors.text, fontSize: 22, fontWeight: '800', marginTop: 3 }, month: { color: theme.colors.mutedText, fontSize: 12, marginTop: 1 }, selectedText: { color: '#FFFFFF' } });
+const createStyles = (colors: typeof theme.colors) => StyleSheet.create({ content: { gap: 10, paddingVertical: 4 }, date: { width: 76, minHeight: 88, borderRadius: theme.radii.md, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface, justifyContent: 'center', alignItems: 'center' }, selected: { backgroundColor: colors.primary, borderColor: colors.primary }, weekday: { color: colors.mutedText, fontSize: 12, fontWeight: '700' }, day: { color: colors.text, fontSize: 22, fontWeight: '800', marginTop: 3 }, month: { color: colors.mutedText, fontSize: 12, marginTop: 1 }, selectedText: { color: colors.onPrimary ?? '#FFFFFF' } });

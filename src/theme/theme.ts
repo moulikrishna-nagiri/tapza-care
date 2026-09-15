@@ -12,6 +12,10 @@ export const theme = {
     border: '#DCEAE8',
     success: '#2D8A62',
     danger: '#C84B4B',
+    onPrimary: '#FFFFFF',
+    overlay: 'rgba(18, 52, 59, 0.35)',
+    warning: '#F4B942',
+    disabled: '#9AAEAC',
   },
   spacing: {
     xs: 4,
@@ -31,6 +35,6 @@ export const theme = {
     body: Platform.select({ ios: 'System', default: 'normal' }),
     display: Platform.select({ ios: 'System', default: 'normal' }),
   },
-} as const;
+};
 
 export type Theme = typeof theme;
