@@ -36,7 +36,7 @@ export const loadConfig = createAsyncThunk<LoadConfigResult, { isFestival: boole
       return { config, isStale: false };
     } catch (error) {
       const cached = await AsyncStorage.getItem(`${CACHE_KEY}/${variant}`);
-      const config = cached ? validateConfig(JSON.parse(cached)) : null;
+      const config = cached ? readCachedConfig(cached) : null;
       if (config) return { config, isStale: true };
       throw error instanceof Error ? error : new Error('Unable to load home configuration.');
     }
@@ -48,6 +48,14 @@ function fetchConfigOrThrow(config: LayoutConfig) {
   const validConfig = validateConfig(config);
   if (!validConfig) throw new Error('The home configuration is invalid.');
   return validConfig;
+}
+
+function readCachedConfig(value: string): LayoutConfig | null {
+  try {
+    return validateConfig(JSON.parse(value));
+  } catch {
+    return null;
+  }
 }
 
 const configSlice = createSlice({
@@ -90,6 +98,7 @@ const configSlice = createSlice({
         state.loading = false;
         state.data = action.payload.config;
         state.isStale = action.payload.isStale;
+        state.error = null;
       })
       .addCase(loadConfig.rejected, (state, action) => {
         state.loading = false;

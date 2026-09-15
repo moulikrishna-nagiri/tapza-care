@@ -1,4 +1,5 @@
 import { delay } from '@/utils/delay';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { AppConfigVariant, LayoutConfig } from '@/types/config';
 import type { Booking, Slot } from '@/types/booking';
 import type { Doctor } from '@/types/doctor';
@@ -12,7 +13,36 @@ const configs: Record<AppConfigVariant, LayoutConfig> = {
   festival: festivalConfig,
 };
 
-let shouldFail = false;
+export type MockNetworkMode = 'normal' | 'slow' | 'failed';
+
+export type MockSettings = {
+  networkMode: MockNetworkMode;
+  emptyDoctors: boolean;
+  emptySlots: boolean;
+  emptyPrescriptions: boolean;
+  bookingConflict: boolean;
+};
+
+const DEFAULT_MOCK_SETTINGS: MockSettings = {
+  networkMode: 'normal',
+  emptyDoctors: false,
+  emptySlots: false,
+  emptyPrescriptions: false,
+  bookingConflict: false,
+};
+
+const MOCK_SETTINGS_KEY = 'tapza-care/mock-settings';
+
+export const mockSettings: MockSettings = {
+  networkMode: 'normal' as MockNetworkMode,
+  emptyDoctors: false,
+  emptySlots: false,
+  emptyPrescriptions: false,
+  bookingConflict: false,
+};
+
+let mockSettingsReady: Promise<void> | null = null;
+
 let shouldFailBooking = false;
 let prescriptionsResponse: Prescription[] | null = null;
 const bookedSlotIds = new Set<string>();
@@ -24,7 +54,44 @@ const doctors: Doctor[] = [
 ];
 
 export function setMockApiFailure(value: boolean) {
-  shouldFail = value;
+  mockSettings.networkMode = value ? 'failed' : 'normal';
+  persistMockSettings();
+}
+
+export function setMockNetworkMode(mode: MockNetworkMode) {
+  mockSettings.networkMode = mode;
+  persistMockSettings();
+}
+
+export function setMockEmptyResponses(values: Partial<Pick<typeof mockSettings, 'emptyDoctors' | 'emptySlots' | 'emptyPrescriptions'>>) {
+  Object.assign(mockSettings, values);
+  persistMockSettings();
+}
+
+export function setMockBookingConflict(value: boolean) {
+  mockSettings.bookingConflict = value;
+  persistMockSettings();
+}
+
+export function resetMockSettings() {
+  Object.assign(mockSettings, DEFAULT_MOCK_SETTINGS);
+  persistMockSettings();
+}
+
+export function loadMockSettings(): Promise<void> {
+  if (!mockSettingsReady) {
+    mockSettingsReady = AsyncStorage.getItem(MOCK_SETTINGS_KEY).then((value) => {
+      if (!value) return;
+      try {
+        const parsed: unknown = JSON.parse(value);
+        if (!isMockSettings(parsed)) return;
+        Object.assign(mockSettings, parsed);
+      } catch {
+        Object.assign(mockSettings, DEFAULT_MOCK_SETTINGS);
+      }
+    });
+  }
+  return mockSettingsReady;
 }
 
 export function setMockBookingFailure(value: boolean) {
@@ -35,21 +102,46 @@ export function setMockPrescriptions(value: Prescription[] | null) {
   prescriptionsResponse = value;
 }
 
+async function mockDelay(milliseconds: number) {
+  await loadMockSettings();
+  await delay(mockSettings.networkMode === 'slow' ? milliseconds * 3 : milliseconds);
+}
+
+function persistMockSettings() {
+  void AsyncStorage.setItem(MOCK_SETTINGS_KEY, JSON.stringify(mockSettings));
+}
+
+function isMockSettings(value: unknown): value is MockSettings {
+  if (!value || typeof value !== 'object') return false;
+  const candidate = value as Partial<MockSettings>;
+  return (candidate.networkMode === 'normal' || candidate.networkMode === 'slow' || candidate.networkMode === 'failed')
+    && typeof candidate.emptyDoctors === 'boolean'
+    && typeof candidate.emptySlots === 'boolean'
+    && typeof candidate.emptyPrescriptions === 'boolean'
+    && typeof candidate.bookingConflict === 'boolean';
+}
+
+function shouldFailRequest() {
+  return mockSettings.networkMode === 'failed';
+}
+
 export async function fetchAppConfig(variant: AppConfigVariant = 'normal'): Promise<LayoutConfig> {
-  await delay(650);
-  if (shouldFail) throw new Error('The configuration service is unavailable.');
+  await mockDelay(650);
+  if (shouldFailRequest()) throw new Error('The configuration service is unavailable.');
   return configs[variant];
 }
 
 export async function getDoctors(): Promise<Doctor[]> {
-  await delay(500);
-  if (shouldFail) throw new Error('The doctor service is unavailable.');
+  await mockDelay(500);
+  if (shouldFailRequest()) throw new Error('The doctor service is unavailable.');
+  if (mockSettings.emptyDoctors) return [];
   return doctors;
 }
 
 export async function getSlots(doctorId: string, date: string): Promise<Slot[]> {
-  await delay(450);
-  if (shouldFail) throw new Error('The availability service is unavailable.');
+  await mockDelay(450);
+  if (shouldFailRequest()) throw new Error('The availability service is unavailable.');
+  if (mockSettings.emptySlots) return [];
   const times = ['10:00', '10:30', '11:00', '11:30', '14:00', '14:30', '18:30', '19:00'];
   return times.map((time, index) => {
     const startsAt = `${date}T${time}:00`;
@@ -62,9 +154,9 @@ export async function getSlots(doctorId: string, date: string): Promise<Slot[]> 
 }
 
 export async function createBooking(doctorId: string, slotId: string): Promise<Booking> {
-  await delay(700);
-  if (shouldFailBooking) throw new Error('We could not complete your booking.');
-  if (bookedSlotIds.has(slotId) || slotId.endsWith('1100')) {
+  await mockDelay(700);
+  if (shouldFailBooking || shouldFailRequest()) throw new Error('We could not complete your booking.');
+  if (mockSettings.bookingConflict || bookedSlotIds.has(slotId)) {
     const error = new Error('This slot is no longer available.') as Error & { status: number };
     error.status = 409;
     throw error;
@@ -74,8 +166,9 @@ export async function createBooking(doctorId: string, slotId: string): Promise<B
 }
 
 export async function getPrescriptions(): Promise<Prescription[]> {
-  await delay(550);
-  if (shouldFail) throw new Error('The prescription service is unavailable.');
+  await mockDelay(550);
+  if (shouldFailRequest()) throw new Error('The prescription service is unavailable.');
+  if (mockSettings.emptyPrescriptions) return [];
   if (prescriptionsResponse) return prescriptionsResponse;
   return [
     {

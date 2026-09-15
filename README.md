@@ -48,6 +48,12 @@ To learn more about developing your project with Expo, look at the following res
 - [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
 - [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
 
+## Test Tools
+
+The submitted APK includes the resilience testing controls. Open the **Profile** tab and scroll to **Test Tools**.
+
+Use the panel to switch between Normal, Slow, and Failed network modes; return empty doctor, slot, or prescription responses; simulate a booking 409 conflict; or reset every setting with **Reset all**. Settings are stored locally in the app and remain selected after an app restart, so reviewers can configure a failure scenario before reopening Home, Booking, or Prescriptions.
+
 ## Join the community
 
 Join our community of developers creating universal apps.

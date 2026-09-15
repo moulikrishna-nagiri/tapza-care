@@ -8,7 +8,8 @@ import { theme } from '@/theme/theme';
 type HeroBannerProps = { section: SectionConfig; scrollY: SharedValue<number>; onAction: (action?: string) => void };
 
 export function HeroBanner({ section, scrollY, onAction }: HeroBannerProps) {
-  const item = section.items[0] as HeroItem;
+  const item = section.items[0] as HeroItem | undefined;
+  if (!item) return null;
   const imageStyle = useAnimatedStyle(() => ({ transform: [{ translateY: interpolate(scrollY.value, [0, 300], [0, 35], 'clamp') }, { scale: interpolate(scrollY.value, [0, 300], [1, 1.08], 'clamp') }] }));
   return <View style={styles.container}><Animated.View style={[StyleSheet.absoluteFill, imageStyle]}><Image source={item.imageUrl} contentFit="cover" style={styles.image} accessibilityLabel="Healthcare consultation" /></Animated.View><View style={styles.overlay} /><View style={styles.content}><Text style={styles.eyebrow}>{item.eyebrow}</Text><Text style={styles.title}>{item.title}</Text><Text style={styles.subtitle}>{item.subtitle}</Text><Pressable accessibilityRole="button" accessibilityLabel={item.ctaLabel} onPress={() => onAction()} style={styles.cta}><Text style={styles.ctaText}>{item.ctaLabel}</Text></Pressable></View></View>;
 }

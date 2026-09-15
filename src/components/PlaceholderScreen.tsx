@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { theme } from '@/theme/theme';
@@ -14,7 +14,7 @@ type PlaceholderScreenProps = {
 export function PlaceholderScreen({ title, children, actionLabel, onAction }: PlaceholderScreenProps) {
   return (
     <SafeAreaView style={styles.safe}>
-      <View style={styles.content}>
+      <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>{title}</Text>
         {children}
         {actionLabel && onAction && (
@@ -22,7 +22,7 @@ export function PlaceholderScreen({ title, children, actionLabel, onAction }: Pl
             <Text style={styles.buttonText}>{actionLabel}</Text>
           </Pressable>
         )}
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -35,7 +35,7 @@ export const placeholderStyles = StyleSheet.create({
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: theme.colors.background },
-  content: { flex: 1, padding: 24 },
+  content: { padding: 24, paddingBottom: 40 },
   title: { color: theme.colors.text, fontSize: 30, fontWeight: '800' },
   button: { minHeight: 48, alignSelf: 'flex-start', justifyContent: 'center', borderRadius: 24, backgroundColor: theme.colors.primary, paddingHorizontal: 22, marginTop: 32 },
   buttonText: { color: '#FFFFFF', fontSize: 15, fontWeight: '700' },

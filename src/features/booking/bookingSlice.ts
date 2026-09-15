@@ -81,10 +81,10 @@ const bookingSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(loadDoctors.pending, (state) => { state.loadingDoctors = true; state.error = null; })
-      .addCase(loadDoctors.fulfilled, (state, action) => { state.loadingDoctors = false; state.doctors = action.payload; })
+      .addCase(loadDoctors.fulfilled, (state, action) => { state.loadingDoctors = false; state.doctors = action.payload; state.error = null; })
       .addCase(loadDoctors.rejected, (state, action) => { state.loadingDoctors = false; state.error = action.error.message ?? 'Unable to load doctors.'; })
       .addCase(loadSlots.pending, (state) => { state.loadingSlots = true; state.error = null; state.slots = []; })
-      .addCase(loadSlots.fulfilled, (state, action) => { state.loadingSlots = false; state.slots = action.payload; })
+      .addCase(loadSlots.fulfilled, (state, action) => { state.loadingSlots = false; state.slots = action.payload; state.error = null; })
       .addCase(loadSlots.rejected, (state, action) => { state.loadingSlots = false; state.error = action.error.message ?? 'Unable to load available slots.'; })
       .addCase(loadBookings.fulfilled, (state, action) => { state.bookings = action.payload; })
       .addCase(submitBooking.fulfilled, (state, action) => { state.booking = action.payload; state.bookingStatus = 'confirmed'; state.bookings = [action.payload, ...state.bookings.filter((item) => item.slotId !== action.payload.slotId)]; state.error = null; })
