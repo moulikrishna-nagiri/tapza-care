@@ -2,6 +2,7 @@ import { delay } from '@/utils/delay';
 import type { AppConfigVariant, LayoutConfig } from '@/types/config';
 import type { Booking, Slot } from '@/types/booking';
 import type { Doctor } from '@/types/doctor';
+import type { Prescription } from '@/types/prescription';
 
 import { festivalConfig } from './config.festival';
 import { normalConfig } from './config.normal';
@@ -13,6 +14,7 @@ const configs: Record<AppConfigVariant, LayoutConfig> = {
 
 let shouldFail = false;
 let shouldFailBooking = false;
+let prescriptionsResponse: Prescription[] | null = null;
 const bookedSlotIds = new Set<string>();
 
 const doctors: Doctor[] = [
@@ -27,6 +29,10 @@ export function setMockApiFailure(value: boolean) {
 
 export function setMockBookingFailure(value: boolean) {
   shouldFailBooking = value;
+}
+
+export function setMockPrescriptions(value: Prescription[] | null) {
+  prescriptionsResponse = value;
 }
 
 export async function fetchAppConfig(variant: AppConfigVariant = 'normal'): Promise<LayoutConfig> {
@@ -65,4 +71,26 @@ export async function createBooking(doctorId: string, slotId: string): Promise<B
   }
   bookedSlotIds.add(slotId);
   return { id: `booking-${Date.now()}`, doctorId, slotId, status: 'confirmed', date: slotId.match(/\d{4}-\d{2}-\d{2}/)?.[0] ?? '' };
+}
+
+export async function getPrescriptions(): Promise<Prescription[]> {
+  await delay(550);
+  if (shouldFail) throw new Error('The prescription service is unavailable.');
+  if (prescriptionsResponse) return prescriptionsResponse;
+  return [
+    {
+      id: 'prescription-1', doctorName: 'Dr. Priya Sharma', doctorSpecialty: 'General Physician', patientName: 'Patient', date: '2026-09-15', diagnosis: 'Common Cold',
+      medicines: [
+        { id: 'medicine-1', name: 'Paracetamol', dosage: '500 mg', duration: '5 days', instructions: 'After food', schedule: { morning: true, afternoon: false, night: true } },
+        { id: 'medicine-2', name: 'Cetirizine', dosage: '10 mg', duration: '5 days', instructions: 'Take before sleep', schedule: { morning: false, afternoon: false, night: true } },
+      ],
+    },
+    {
+      id: 'prescription-2', doctorName: 'Dr. Arjun Rao', doctorSpecialty: 'Cardiology', patientName: 'Patient', date: '2026-09-12', diagnosis: 'Blood pressure management',
+      medicines: [
+        { id: 'medicine-3', name: 'Amlodipine', dosage: '5 mg', duration: '30 days', instructions: 'Take with water', schedule: { morning: true, afternoon: false, night: false } },
+        { id: 'medicine-4', name: 'Atorvastatin', dosage: '10 mg', duration: '30 days', instructions: 'After dinner', schedule: { morning: false, afternoon: false, night: true } },
+      ],
+    },
+  ];
 }
