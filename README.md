@@ -128,8 +128,6 @@ Automated Jest or unit tests were not added.
 
 ## Submission Notes
 
-## Submission
-
 ### Android APK
 
 [Download Android APK](https://github.com/moulikrishna-nagiri/tapza-care/releases/download/v1.0.0/app-release.apk)
