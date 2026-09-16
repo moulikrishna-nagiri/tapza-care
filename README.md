@@ -128,9 +128,25 @@ Automated Jest or unit tests were not added.
 
 ## Submission Notes
 
-- APK: `TODO`
-- Demo video: `TODO`
-- Screenshots: `TODO`
+## Submission
+
+### Android APK
+
+[Download Android APK](https://github.com/moulikrishna-nagiri/tapza-care/releases/download/v1.0.0/app-release.apk)
+
+### Demo Video
+
+The 2 minute demo video is available in the `docs` directory.
+
+### Screenshots
+
+Screenshots demonstrating the main features, booking flow, prescriptions, themes, and resilience scenarios are available in the `docs` directory.
+
+### AI Usage
+
+AI was used as a development assistant for implementation guidance, debugging, code suggestions, documentation, and reviewing approaches.
+
+All generated changes were reviewed, tested, and validated manually. Detailed prompts, decisions, and rejected approaches are documented in `AI_LOG.md`.
 
 ## Notes
 
