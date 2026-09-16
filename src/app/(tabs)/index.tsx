@@ -3,28 +3,30 @@ import { useRouter } from "expo-router";
 import { useEffect } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
-    useAnimatedScrollHandler,
-    useSharedValue,
+  useAnimatedScrollHandler,
+  useSharedValue,
 } from "react-native-reanimated";
 import {
-    SafeAreaView,
-    useSafeAreaInsets,
+  SafeAreaView,
+  useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { SectionBackground } from "@/components/SectionBackground";
 import { Skeleton } from "@/components/Skeleton";
 import {
-    sectionRegistry,
-    type SectionRendererProps,
+  sectionRegistry,
+  type SectionRendererProps,
 } from "@/config/sectionRegistry";
 import { loadConfig, setFestivalMode } from "@/features/home/configSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/app-hooks";
+import { useAppTheme } from "@/theme/app-theme";
 import { theme } from "@/theme/theme";
 
 export default function HomeScreen() {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const { theme: appTheme } = useAppTheme();
   const insets = useSafeAreaInsets();
   const scrollY = useSharedValue(0);
   const { data, loading, error, isFestival, isStale } = useAppSelector(
@@ -56,7 +58,7 @@ export default function HomeScreen() {
     );
   return (
     <SafeAreaView
-      style={[styles.safe, { backgroundColor: data.theme.background }]}
+      style={[styles.safe, { backgroundColor: appTheme.colors.background }]}
     >
       <Animated.ScrollView
         onScroll={onScroll}
@@ -67,7 +69,9 @@ export default function HomeScreen() {
         ]}
       >
         <View style={styles.modeRow}>
-          <Text style={[styles.modeLabel, { color: data.theme.textSecondary }]}>
+          <Text
+            style={[styles.modeLabel, { color: appTheme.colors.mutedText }]}
+          >
             {isStale
               ? "Offline: showing saved content"
               : data.theme.festival.name || "Personal care"}
@@ -77,10 +81,16 @@ export default function HomeScreen() {
             accessibilityState={{ checked: isFestival }}
             accessibilityLabel="Toggle festival mode"
             onPress={() => dispatch(setFestivalMode(!isFestival))}
-            style={[styles.modeButton, { borderColor: data.theme.primary }]}
+            style={[
+              styles.modeButton,
+              { borderColor: appTheme.colors.primary },
+            ]}
           >
             <Text
-              style={[styles.modeButtonText, { color: data.theme.primary }]}
+              style={[
+                styles.modeButtonText,
+                { color: appTheme.colors.primary },
+              ]}
             >
               {isFestival ? "Normal view" : "Festival view"}
             </Text>
@@ -118,7 +128,7 @@ export default function HomeScreen() {
                     <Text
                       style={[
                         styles.sectionTitle,
-                        { color: data.theme.textPrimary },
+                        { color: appTheme.colors.text },
                       ]}
                     >
                       {section.title}
@@ -147,7 +157,9 @@ export default function HomeScreen() {
               onPress={() => dispatch(loadConfig({ isFestival }))}
               style={styles.retry}
             >
-              <Text style={[styles.retryText, { color: data.theme.primary }]}>
+              <Text
+                style={[styles.retryText, { color: appTheme.colors.primary }]}
+              >
                 Try again
               </Text>
             </Pressable>
@@ -211,7 +223,7 @@ const styles = StyleSheet.create({
   },
   modeLabel: { fontSize: 13, fontWeight: "600" },
   modeButton: {
-  minHeight: 44,
+    minHeight: 44,
     borderWidth: 1,
     borderRadius: 20,
     paddingHorizontal: 14,
