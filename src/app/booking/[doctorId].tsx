@@ -5,21 +5,21 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Skeleton } from "@/components/Skeleton";
 import {
-    clearBookingError,
-    loadDoctors,
-    loadSlots,
-    setSelectedDate,
-    setSelectedDoctor,
-    setSelectedSlot,
-    submitBooking,
+  clearBookingError,
+  loadDoctors,
+  loadSlots,
+  setSelectedDate,
+  setSelectedDoctor,
+  setSelectedSlot,
+  submitBooking,
 } from "@/features/booking/bookingSlice";
 import { BookingSuccess } from "@/features/booking/components/BookingSuccess";
 import { BookingSummary } from "@/features/booking/components/BookingSummary";
 import { DateSelector } from "@/features/booking/components/DateSelector";
 import { SlotBottomSheet } from "@/features/booking/components/SlotBottomSheet";
 import { useAppDispatch, useAppSelector } from "@/hooks/app-hooks";
-import { theme } from "@/theme/theme";
 import { useAppTheme } from "@/theme/app-theme";
+import { theme } from "@/theme/theme";
 import type { Slot } from "@/types/booking";
 
 function toDateKey(date: Date) {
@@ -43,7 +43,7 @@ export default function DoctorBookingScreen() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { theme: appTheme } = useAppTheme();
-  const dates = useMemo(upcomingDates, []);
+  const dates = useMemo(() => upcomingDates(), []);
   const [sheetVisible, setSheetVisible] = useState(false);
   const {
     doctors,
@@ -73,7 +73,9 @@ export default function DoctorBookingScreen() {
 
   if (bookingStatus === "confirmed" && booking)
     return (
-      <SafeAreaView style={[styles.safe, { backgroundColor: appTheme.colors.background }] }>
+      <SafeAreaView
+        style={[styles.safe, { backgroundColor: appTheme.colors.background }]}
+      >
         <BookingSuccess
           booking={booking}
           onBookings={() => router.replace("/bookings")}
@@ -83,7 +85,9 @@ export default function DoctorBookingScreen() {
     );
   if (!doctor && loadingDoctors)
     return (
-      <SafeAreaView style={[styles.safe, { backgroundColor: appTheme.colors.background }] }>
+      <SafeAreaView
+        style={[styles.safe, { backgroundColor: appTheme.colors.background }]}
+      >
         <View style={styles.loading}>
           <Skeleton width="70%" height={30} />
           <Skeleton width="45%" height={20} />
@@ -114,7 +118,9 @@ export default function DoctorBookingScreen() {
     if (selectedSlot) dispatch(submitBooking({ doctor, slot: selectedSlot }));
   };
   return (
-    <SafeAreaView style={[styles.safe, { backgroundColor: appTheme.colors.background }] }>
+    <SafeAreaView
+      style={[styles.safe, { backgroundColor: appTheme.colors.background }]}
+    >
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>{doctor.name}</Text>
         <Text style={styles.subtitle}>

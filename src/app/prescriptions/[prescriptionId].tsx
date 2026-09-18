@@ -6,15 +6,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Skeleton } from "@/components/Skeleton";
 import { MedicineCard } from "@/features/prescriptions/components/MedicineCard";
 import {
-    getDoseKey,
-    loadDoseStatuses,
-    loadPrescriptions,
-    markDoseTaken,
-    setSelectedPrescription,
+  getDoseKey,
+  loadDoseStatuses,
+  loadPrescriptions,
+  markDoseTaken,
+  setSelectedPrescription,
 } from "@/features/prescriptions/prescriptionsSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks/app-hooks";
-import { theme } from "@/theme/theme";
 import { useAppTheme } from "@/theme/app-theme";
+import { theme } from "@/theme/theme";
 import type { DosePeriod } from "@/types/prescription";
 
 function todayKey() {
@@ -35,7 +35,7 @@ export default function PrescriptionDetailScreen() {
     (state) => state.prescriptions,
   );
   const prescription = prescriptions.find((item) => item.id === prescriptionId);
-  const date = useMemo(todayKey, []);
+  const date = useMemo(() => todayKey(), []);
 
   useEffect(() => {
     dispatch(setSelectedPrescription(prescriptionId ?? null));
@@ -45,7 +45,9 @@ export default function PrescriptionDetailScreen() {
 
   if (loading && !prescription)
     return (
-      <SafeAreaView style={[styles.safe, { backgroundColor: appTheme.colors.background }] }>
+      <SafeAreaView
+        style={[styles.safe, { backgroundColor: appTheme.colors.background }]}
+      >
         <View style={styles.loading}>
           <Skeleton width="65%" height={30} />
           <Skeleton width="45%" height={18} />
@@ -56,7 +58,9 @@ export default function PrescriptionDetailScreen() {
     );
   if (!prescription)
     return (
-      <SafeAreaView style={[styles.safe, { backgroundColor: appTheme.colors.background }] }>
+      <SafeAreaView
+        style={[styles.safe, { backgroundColor: appTheme.colors.background }]}
+      >
         <View style={styles.center}>
           <Text style={styles.errorTitle}>Prescription not found</Text>
           <Text style={styles.errorText}>
@@ -89,7 +93,9 @@ export default function PrescriptionDetailScreen() {
     ? prescription.medicines
     : [];
   return (
-    <SafeAreaView style={[styles.safe, { backgroundColor: appTheme.colors.background }] }>
+    <SafeAreaView
+      style={[styles.safe, { backgroundColor: appTheme.colors.background }]}
+    >
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>Prescription details</Text>
         <View style={styles.summary}>

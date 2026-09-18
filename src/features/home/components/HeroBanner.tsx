@@ -1,14 +1,14 @@
 import { Image } from "expo-image";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
-    interpolate,
-    useAnimatedStyle,
-    type SharedValue,
+  interpolate,
+  useAnimatedStyle,
+  type SharedValue,
 } from "react-native-reanimated";
 
+import { useAppTheme } from "@/theme/app-theme";
 import { theme } from "@/theme/theme";
 import type { HeroItem, SectionConfig } from "@/types/config";
-import { useAppTheme } from '@/theme/app-theme';
 
 type HeroBannerProps = {
   section: SectionConfig;
@@ -20,13 +20,13 @@ export function HeroBanner({ section, scrollY, onAction }: HeroBannerProps) {
   const { theme: appTheme } = useAppTheme();
   const styles = createStyles(appTheme.colors);
   const item = section.items[0] as HeroItem | undefined;
-  if (!item) return null;
   const imageStyle = useAnimatedStyle(() => ({
     transform: [
       { translateY: interpolate(scrollY.value, [0, 300], [0, 35], "clamp") },
       { scale: interpolate(scrollY.value, [0, 300], [1, 1.08], "clamp") },
     ],
   }));
+  if (!item) return null;
   return (
     <View style={styles.container}>
       <Animated.View style={[StyleSheet.absoluteFill, imageStyle]}>
@@ -55,41 +55,47 @@ export function HeroBanner({ section, scrollY, onAction }: HeroBannerProps) {
   );
 }
 
-const createStyles = (colors: typeof theme.colors) => StyleSheet.create({
-  container: {
-    minHeight: 270,
-    borderRadius: 24,
-    overflow: "hidden",
-    justifyContent: "flex-end",
-  },
-  image: { ...StyleSheet.absoluteFill },
-  overlay: {
-    ...StyleSheet.absoluteFill,
-    backgroundColor: colors.overlay,
-  },
-  content: { padding: 24, maxWidth: 360 },
-  eyebrow: {
-    color: colors.secondary,
-    fontSize: 12,
-    fontWeight: "700",
-    letterSpacing: 1,
-  },
-  title: {
-    color: colors.onPrimary,
-    fontSize: 30,
-    lineHeight: 35,
-    fontWeight: "800",
-    marginTop: 8,
-  },
-  subtitle: { color: colors.onPrimary, fontSize: 15, lineHeight: 22, marginTop: 8 },
-  cta: {
-    minHeight: 46,
-    alignSelf: "flex-start",
-    backgroundColor: colors.surface,
-    borderRadius: 23,
-    paddingHorizontal: 19,
-    justifyContent: "center",
-    marginTop: 18,
-  },
-  ctaText: { color: colors.primary, fontSize: 15, fontWeight: "700" },
-});
+const createStyles = (colors: typeof theme.colors) =>
+  StyleSheet.create({
+    container: {
+      minHeight: 270,
+      borderRadius: 24,
+      overflow: "hidden",
+      justifyContent: "flex-end",
+    },
+    image: { ...StyleSheet.absoluteFill },
+    overlay: {
+      ...StyleSheet.absoluteFill,
+      backgroundColor: colors.overlay,
+    },
+    content: { padding: 24, maxWidth: 360 },
+    eyebrow: {
+      color: colors.secondary,
+      fontSize: 12,
+      fontWeight: "700",
+      letterSpacing: 1,
+    },
+    title: {
+      color: colors.onPrimary,
+      fontSize: 30,
+      lineHeight: 35,
+      fontWeight: "800",
+      marginTop: 8,
+    },
+    subtitle: {
+      color: colors.onPrimary,
+      fontSize: 15,
+      lineHeight: 22,
+      marginTop: 8,
+    },
+    cta: {
+      minHeight: 46,
+      alignSelf: "flex-start",
+      backgroundColor: colors.surface,
+      borderRadius: 23,
+      paddingHorizontal: 19,
+      justifyContent: "center",
+      marginTop: 18,
+    },
+    ctaText: { color: colors.primary, fontSize: 15, fontWeight: "700" },
+  });

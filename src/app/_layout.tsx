@@ -38,7 +38,9 @@ export default function TabLayout() {
       <SafeAreaProvider>
         <Provider store={store}>
           <AppThemeProvider>
-            <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+            <ThemeProvider
+              value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+            >
               <RootStatusBar />
               <Stack screenOptions={{ headerShown: false }} />
             </ThemeProvider>
@@ -50,7 +52,7 @@ export default function TabLayout() {
 }
 
 function RootStatusBar() {
-  const { data, isFestival } = useAppSelector((state) => state.config);
+  const { isFestival } = useAppSelector((state) => state.config);
   const { theme } = useAppTheme();
   const backgroundColor = theme.colors.background;
 
@@ -58,5 +60,7 @@ function RootStatusBar() {
     SystemUI.setBackgroundColorAsync(backgroundColor);
   }, [backgroundColor]);
 
-  return <StatusBar style={theme.mode === 'dark' || isFestival ? "light" : "dark"} />;
+  return (
+    <StatusBar style={theme.mode === "dark" || isFestival ? "light" : "dark"} />
+  );
 }
