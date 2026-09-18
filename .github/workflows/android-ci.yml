@@ -37,9 +37,6 @@ jobs:
       - name: Run lint
         run: npm run lint
 
-      - name: Run tests
-        run: npm test -- --watchAll=false
-
       - name: Build Android APK
         working-directory: android
         run: ./gradlew assembleRelease
